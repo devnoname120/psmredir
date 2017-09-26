@@ -91,7 +91,7 @@ int hook_sysmodule_load(uint16_t id) {
 
 	switch (id) {
 	case SCE_SYSMODULE_HTTP:
-		if (g_hook == -1) {
+		if (g_hook < 0) {
 			g_hook = taiHookFunctionExport(&ref_sceNetResolverStartNtoa, "SceNet", TAI_ANY_LIBRARY /*0x6BF8B2A2*/, 0x424AE26, hook_sceNetResolverStartNtoa); 
 			LOG("hook module_resolverNtoa: 0x%08X", g_hook);
 		}    
