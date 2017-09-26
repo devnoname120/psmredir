@@ -11,7 +11,7 @@ endif()
 project(psmredir)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostdlib -std=c99 -fno-strict-aliasing")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O0 -nostdlib -std=c99 -fno-strict-aliasing")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_executable(psmredir
@@ -19,12 +19,13 @@ add_executable(psmredir
 )
 
 target_link_libraries(psmredir
-  SceNet_stub
-  SceIofilemgr_stub
+  SceNet_stub_weak
   taihen_stub
   kuio_stub
   k
   gcc
+  SceIofilemgr_stub
+  SceLibKernel_stub
 )
 
 vita_create_self(psmredir.suprx psmredir CONFIG exports.yml UNSAFE)
