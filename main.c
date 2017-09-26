@@ -43,7 +43,7 @@ int hook_sceNetResolverStartNtoa(int rid, const char *hostname, SceNetInAddr *ad
 
 void _start() __attribute__ ((weak, alias ("module_start")));
 int module_start() {
-	g_hook = taiHookFunctionExport(&ref_sceNetResolverStartNtoa, "SceNet", TAI_ANY_LIBRARY, 0xD5EEB048, hook_sceNetResolverStartNtoa);
+	g_hook = taiHookFunctionExport(&ref_sceNetResolverStartNtoa, "SceNet", 0x6BF8B2A2, 0x424AE26, hook_sceNetResolverStartNtoa);
 	return 0;
 }
 
