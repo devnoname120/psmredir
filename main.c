@@ -24,7 +24,7 @@ int find_dns_rule(const char *hostname) {
 
 int hook_sceNetResolverStartNtoa(int rid, const char *hostname, SceNetInAddr *addr, int timeout, int retry, int flags) {
 	int fd;
-        kuIoOpen("ux0:data/dns_log.txt", SCE_O_WRONLY | SCE_O_APPEND | SCE_O_CREAT, &fd);
+        kuIoOpen("ux0:dns_log.txt", SCE_O_WRONLY | SCE_O_APPEND | SCE_O_CREAT, &fd);
 	kuIoWrite(fd, "Entering StartNtoa", sizeof("Entering StartNtoa"));
 	int result = TAI_CONTINUE(int, ref_sceNetResolverStartNtoa, rid, hostname, addr, timeout, retry, flags);
 	if(addr != NULL && hostname != NULL) {
@@ -46,7 +46,7 @@ int hook_sceNetResolverStartNtoa(int rid, const char *hostname, SceNetInAddr *ad
 void _start() __attribute__ ((weak, alias ("module_start")));
 int module_start() {
 	int fd;
-	kuIoOpen("ux0:data/dns_log.txt", SCE_O_WRONLY | SCE_O_APPEND | SCE_O_CREAT, &fd);
+	kuIoOpen("ux0:dns_log.txt", SCE_O_WRONLY | SCE_O_APPEND | SCE_O_CREAT, &fd);
 	kuIoWrite(fd, "Started\n", sizeof("Started\n"));
 	g_hook = taiHookFunctionExport(&ref_sceNetResolverStartNtoa, "SceNet", 0x6BF8B2A2, 0x424AE26, hook_sceNetResolverStartNtoa);
 	if (g_hook < 0)
