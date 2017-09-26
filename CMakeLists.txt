@@ -24,6 +24,7 @@ target_link_libraries(psmredir
   taihen_stub
   kuio_stub
   k
+  gcc
 )
 
 vita_create_self(psmredir.suprx psmredir CONFIG exports.yml UNSAFE)
