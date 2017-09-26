@@ -20,10 +20,10 @@ add_executable(psmredir
 
 target_link_libraries(psmredir
   SceNet_stub
-  SceLibKernel_stub
   SceIofilemgr_stub
   taihen_stub
   kuio_stub
+  k
 )
 
 vita_create_self(psmredir.suprx psmredir CONFIG exports.yml UNSAFE)

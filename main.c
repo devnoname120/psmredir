@@ -2,6 +2,7 @@
 #include <psp2/net/net.h>
 #include <psp2/io/fcntl.h>
 #include <kuio.h>
+#include <libk/string.h>
 
 
 char* rules[][2] = {{"psm-runtime.np.dl.playstation.net", "23.67.253.169"},
@@ -16,7 +17,7 @@ static SceUID g_hook;
 int find_dns_rule(const char *hostname) {
 	int nEntries = sizeof(rules)/sizeof(rules[0]);
 	for (int i=0; i<nEntries; i++) {
-		if (sceClibStrstr(hostname, rules[i][0]) != NULL)
+		if (strstr(hostname, rules[i][0]) != NULL)
 			return i;
 	}
 	return -1;
@@ -48,7 +49,7 @@ int module_start() {
 	int fd;
 	kuIoOpen("ux0:dns_log.txt", SCE_O_WRONLY | SCE_O_APPEND | SCE_O_CREAT, &fd);
 	kuIoWrite(fd, "Started\n", sizeof("Started\n"));
-	g_hook = taiHookFunctionExport(&ref_sceNetResolverStartNtoa, "SceNet", 0x6BF8B2A2, 0x424AE26, hook_sceNetResolverStartNtoa);
+	g_hook = taiHookFunctionImport(&ref_sceNetResolverStartNtoa, TAI_MAIN_MODULE/*"SceNet*/, 0x6BF8B2A2, 0x424AE26, hook_sceNetResolverStartNtoa);
 	if (g_hook < 0)
 		kuIoWrite(fd, "Bad\n", sizeof("Bad\n"));
 	kuIoClose(fd);
