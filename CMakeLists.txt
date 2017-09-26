@@ -23,6 +23,7 @@ target_link_libraries(psmredir
   SceLibKernel_stub
   SceIofilemgr_stub
   taihen_stub
+  kuio_stub
 )
 
 vita_create_self(psmredir.suprx psmredir CONFIG exports.yml UNSAFE)
