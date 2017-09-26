@@ -70,6 +70,7 @@ int hook_sceNetResolverStartNtoa(int rid, const char *hostname, SceNetInAddr *ad
 	int result = TAI_CONTINUE(int, ref_sceNetResolverStartNtoa, rid, hostname, addr, timeout, retry, flags);
 	if(addr != NULL && hostname != NULL) {
 		int rule = find_dns_rule(hostname);
+		LOG("redir %s | %s ---> %s", hostname, rules[0][rule], rules[1][rule]);
 		if (rule >= 0) {
 			int res = sceNetInetPton(SCE_NET_AF_INET, rules[1][rule], &(addr->s_addr));
 			if (res == 0) {
@@ -77,6 +78,8 @@ int hook_sceNetResolverStartNtoa(int rid, const char *hostname, SceNetInAddr *ad
 				return 0;
 			}
 		}
+	} else {
+		LOG("redir not found for %s", hostname);
 	}
 	LOG("<-- sceNetResolverStartNtoa()");
 	return result;
@@ -124,9 +127,13 @@ int hook_sysmodule_unload(uint16_t id) {
 
 int hooks_setup() {
 	LOG("--> module_start()");
-	g_load = taiHookFunctionExport(&ref_load_hook, "SceNet", 0x03FCF19D, 0x79A0160A, hook_sysmodule_load);
+	// It fails if the net module is not loaded yet, it's fine
+	g_hook = taiHookFunctionExport(&ref_sceNetResolverStartNtoa, "SceNet", TAI_ANY_LIBRARY /*0x6BF8B2A2*/, 0x424AE26, hook_sceNetResolverStartNtoa); 
+	LOG("trying to hook module_resolverNtoa: 0x%08X", g_hook);
+
+	g_load = taiHookFunctionExport(&ref_load_hook, "SceSysmodule", TAI_ANY_LIBRARY /*0x03FCF19D*/, 0x79A0160A, hook_sysmodule_load);
 	LOG("hook module_load: 0x%08X", g_load);
-	g_unload = taiHookFunctionExport(&ref_unload_hook, "SceNet", 0x03FCF19D, 0x31D87805, hook_sysmodule_unload);
+	g_unload = taiHookFunctionExport(&ref_unload_hook, "SceSysmodule", TAI_ANY_LIBRARY /*0x03FCF19D*/, 0x31D87805, hook_sysmodule_unload);
 	LOG("hook module_unload: 0x%08X", g_unload);
 	LOG("<-- module_start()");
 	return 0;
